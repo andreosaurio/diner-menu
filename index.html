@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bottega Diner</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js"></script>
+
 </head>
 <body>
     <script>
@@ -89,25 +92,60 @@ function capitalize(str) {
     return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function saludarYSeleccionarMenu() {
-    alert ("¡Bienvenido a Botega Diner!");
-    const menu = prompt("¿Qué menú deseas tomar?\n- Desayuno\n- Comida\n- Cena").toLowerCase();
-    switch (menu) {
-        case "desayuno":
-            mostrarDesayuno();
-            break;
-        case "comida":
-            mostrarComida();
-            break;
-        case "cena":
-            mostrarCena();
-            break;
-        default:
-            console.log("Opción inválida. Por favor, elige desayuno, comida o cena");
-            saludarYSeleccionarMenu();
-            break;
-    }
+
+// Definir una función para validar el formato de la hora
+function validarFormatoHora(hora) {
+    const horaRegex = /^(?:2[0-3]|[01]?[0-9]):[0-5][0-9]$/; // Expresión regular para validar el formato HH:mm
+    return horaRegex.test(hora);
 }
+
+// Obtener la hora actual
+let horaActualString = prompt("¡Bienvenido a Bottega Diner!\n\nPor favor, introduce la hora actual en formato HH:mm (por ejemplo, 08:30):");
+
+// Validar el formato de la hora ingresada
+while (!validarFormatoHora(horaActualString)) {
+    horaActualString = prompt("La hora introducida no está en el formato correcto (HH:mm) o está fuera del rango válido (00:00 a 23:59).\n\nPor favor, introduce la hora actual en formato HH:mm (por ejemplo, 08:30):");
+}
+
+const horaActual = moment(horaActualString, 'HH:mm');
+
+// Definir los horarios de apertura y cierre para cada servicio
+const horarioDesayunoInicio = moment('07:59', 'HH:mm');
+const horarioDesayunoFin = moment('12:01', 'HH:mm');
+const horarioComidaInicio = moment('13:29', 'HH:mm');
+const horarioComidaFin = moment('16:01', 'HH:mm');
+const horarioCenaInicio = moment('20:29', 'HH:mm');
+const horarioCenaFin = moment('23:31', 'HH:mm');
+
+// Función para determinar qué menú mostrar según la hora actual
+function obtenerMenu(hora) {
+    if (hora.isBetween(horarioDesayunoInicio, horarioDesayunoFin)) {
+        mostrarDesayuno();
+    } else if (hora.isBetween(horarioComidaInicio, horarioComidaFin)) {
+        mostrarComida();
+    } else if (hora.isBetween(horarioCenaInicio, horarioCenaFin)) {
+        mostrarCena();
+    } else {
+        // Si el restaurante está cerrado, determinar la próxima apertura
+        if (hora.isBefore(horarioDesayunoInicio)) {
+            return `El restaurante está cerrado. La próxima apertura será a las 8:00h para el desayuno.\n\n¡Nos vemos por la mañana!`;
+        } else if (hora.isBefore(horarioComidaInicio)) {
+            return `El restaurante está cerrado. La próxima apertura será a las 13:30h para la comida.\n\n¡Nos vemos más tarde!`;
+        } else if (hora.isBefore(horarioCenaInicio)) {
+            return `El restaurante está cerrado. La próxima apertura será a las 20:30 para la cena.\n\n¡Nos vemos a la noche!`;
+        } else {
+            // Si la hora actual es después del horario de cierre de la cena
+            return `El restaurante está cerrado por hoy. Volvemos mañana a partir de las 8:00h con nuestros desayunos.`;
+        }
+    }
+    return menuActual
+}
+
+// Obtener el menú según la hora actual
+const menuActual = obtenerMenu(horaActual);
+
+// Mostrar el menú al usuario
+alert(menuActual);
 
 function personalizarDesayuno(eleccionDesayuno) {
     switch (eleccionDesayuno) {
@@ -118,6 +156,8 @@ function personalizarDesayuno(eleccionDesayuno) {
             if (personalizacionTostadas === "sí" || personalizacionTostadas === "si") {
                 desayuno[eleccionDesayuno].precio += precioMermelada;
                 return precioMermelada;
+            } else {
+                return 0; // Asegura que siempre se devuelva un valor
             }
             break;
         case "churros":
@@ -127,6 +167,8 @@ function personalizarDesayuno(eleccionDesayuno) {
             if (personalizacionChurros === "sí" || personalizacionChurros === "si") {
                 desayuno[eleccionDesayuno].precio += precioChocolate;
                 return precioChocolate;
+            } else {
+                return 0; // Asegura que siempre se devuelva un valor
             }
             break;
         case "tortilla":
@@ -136,6 +178,8 @@ function personalizarDesayuno(eleccionDesayuno) {
             if (personalizacionTortilla === "sí" || personalizacionTortilla === "si") {
                 desayuno[eleccionDesayuno].precio += precioPan;
                 return precioPan;
+            } else {
+                return 0; // Asegura que siempre se devuelva un valor
             }
             break;
         case "croissant":
@@ -145,6 +189,8 @@ function personalizarDesayuno(eleccionDesayuno) {
             if (personalizacionCroissant === "sí" || personalizacionCroissant === "si") {
                 desayuno[eleccionDesayuno].precio += precioMermeladaCroissant;
                 return precioMermeladaCroissant;
+            } else {
+                return 0; // Asegura que siempre se devuelva un valor
             }
             break;
         default:
@@ -153,28 +199,34 @@ function personalizarDesayuno(eleccionDesayuno) {
     }
 }
 
+
 function mostrarDesayuno() {
     var mensajeDesayuno = "Tenemos las siguientes opciones de desayuno:\n";
+    var i = 1;
     for (var platoDesayuno in desayuno) {
-        mensajeDesayuno += "- " + capitalize(platoDesayuno) + "\n";
+        mensajeDesayuno += i + ". " + capitalize(platoDesayuno) + ": " + desayuno[platoDesayuno].precio.toFixed(2) + "€\n";
+        i++;
     }
-    var eleccionDesayuno = prompt(mensajeDesayuno + "\n¿Qué deseas tomar?").toLowerCase();
+    var eleccionDesayuno = parseInt(prompt(mensajeDesayuno + "\n¿Qué deseas tomar?"));
 
-    if (eleccionDesayuno in desayuno) {
-        var precioEleccionDesayuno = desayuno[eleccionDesayuno].precio;
+    if (eleccionDesayuno >= 1 && eleccionDesayuno <= i) {
+        eleccionDesayuno--; // Ajustamos el índice para que coincida con el objeto
+        var precioEleccionDesayuno = desayuno[Object.keys(desayuno)[eleccionDesayuno]].precio;
 
-        var precioConPersonalizacion = personalizarDesayuno(eleccionDesayuno);
+        var precioConPersonalizacion = personalizarDesayuno(Object.keys(desayuno)[eleccionDesayuno]);
 
         precioEleccionDesayuno += precioConPersonalizacion;
 
         alert("El precio total es: " + precioEleccionDesayuno.toFixed(2) + "€.");
+        return;
     } else {
-        alert("Selección inválida. Por favor, elige un nombre válido.");
+        alert("Selección inválida. Por favor, elige un número válido.");
         mostrarDesayuno();
     }
+    return precioEleccionDesayuno;
 }
 
-function mostrarPrincipales(menu) {
+/*function mostrarPrincipales(menu) {
     var precioPrincipal;
 
     var mensajePrincipal = "Los platos principales son:\n";
@@ -352,10 +404,7 @@ function mostrarCena() {
     var precioPrincipalCena = mostrarPrincipales("cena");
     var precioAcompanantesCena = mostrarAcompanantes("cena");
     calcularPrecioFinal(precioPrincipalCena, precioAcompanantesCena);
-}
-
-
-saludarYSeleccionarMenu();
+}*/
         
     </script>
 </body>
