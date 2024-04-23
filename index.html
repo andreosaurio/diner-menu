@@ -156,9 +156,11 @@ function personalizarDesayuno(eleccionDesayuno) {
             if (personalizacionTostadas === "sí" || personalizacionTostadas === "si") {
                 desayuno[eleccionDesayuno].precio += precioMermelada;
                 return precioMermelada;
-            } else {
+            } else if (personalizacionTostadas === "no" ) {
                 return 0; // Asegura que siempre se devuelva un valor
-            }
+            } else {
+                alert("Lo sentimos, debes introducir 'sí' o 'no'.");
+                return "Lo sentimos, debes introducir 'sí' o 'no'. " + personalizarDesayuno(eleccionDesayuno);            }
             break;
         case "churros":
             var precioChocolate = desayuno[eleccionDesayuno].personalizaciones.chocolate.precio;
@@ -167,9 +169,11 @@ function personalizarDesayuno(eleccionDesayuno) {
             if (personalizacionChurros === "sí" || personalizacionChurros === "si") {
                 desayuno[eleccionDesayuno].precio += precioChocolate;
                 return precioChocolate;
-            } else {
+            } else if (personalizacionChurros === "no" ) {
                 return 0; // Asegura que siempre se devuelva un valor
-            }
+            } else {
+                alert("Lo sentimos, debes introducir 'sí' o 'no'.");
+                return "Lo sentimos, debes introducir 'sí' o 'no'. " + personalizarDesayuno(eleccionDesayuno);            }
             break;
         case "tortilla":
             var precioPan = desayuno[eleccionDesayuno].personalizaciones.pan.precio;
@@ -178,9 +182,11 @@ function personalizarDesayuno(eleccionDesayuno) {
             if (personalizacionTortilla === "sí" || personalizacionTortilla === "si") {
                 desayuno[eleccionDesayuno].precio += precioPan;
                 return precioPan;
-            } else {
+            } else if (personalizacionTortilla === "no" ) {
                 return 0; // Asegura que siempre se devuelva un valor
-            }
+            } else {
+                alert("Lo sentimos, debes introducir 'sí' o 'no'.");
+                return "Lo sentimos, debes introducir 'sí' o 'no'. " + personalizarDesayuno(eleccionDesayuno);            }
             break;
         case "croissant":
             var precioMermeladaCroissant = desayuno[eleccionDesayuno].personalizaciones.mermelada.precio;
@@ -189,9 +195,11 @@ function personalizarDesayuno(eleccionDesayuno) {
             if (personalizacionCroissant === "sí" || personalizacionCroissant === "si") {
                 desayuno[eleccionDesayuno].precio += precioMermeladaCroissant;
                 return precioMermeladaCroissant;
-            } else {
+            } else if (personalizacionCroissant === "no" ) {
                 return 0; // Asegura que siempre se devuelva un valor
-            }
+            } else {
+                alert("Lo sentimos, debes introducir 'sí' o 'no'.");
+                return "Lo sentimos, debes introducir 'sí' o 'no'. " + personalizarDesayuno(eleccionDesayuno);            }
             break;
         default:
             alert("Desayuno no válido.");
