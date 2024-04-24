@@ -209,13 +209,13 @@ function personalizarDesayuno(eleccionDesayuno) {
 
 
 function mostrarDesayuno() {
-    var mensajeDesayuno = "Tenemos las siguientes opciones de desayuno:\n";
+    var mensajeDesayuno = "Esta es nuestra carta de desayunos:\n\n";
     var i = 1;
     for (var platoDesayuno in desayuno) {
         mensajeDesayuno += i + ". " + capitalize(platoDesayuno) + ": " + desayuno[platoDesayuno].precio.toFixed(2) + "€\n";
         i++;
     }
-    var eleccionDesayuno = parseInt(prompt(mensajeDesayuno + "\n¿Qué deseas tomar?"));
+    var eleccionDesayuno = parseInt(prompt(mensajeDesayuno + "\n¿Qué deseas tomar? Escribe el número correspondiente al plato:"));
 
     if (eleccionDesayuno >= 1 && eleccionDesayuno <= i) {
         eleccionDesayuno--; // Ajustamos el índice para que coincida con el objeto
@@ -234,30 +234,24 @@ function mostrarDesayuno() {
     return precioEleccionDesayuno;
 }
 
-/*function mostrarPrincipales(menu) {
-    var precioPrincipal;
-
-    var mensajePrincipal = "Los platos principales son:\n";
-    for (var plato in principales) {
-        mensajePrincipal += "- " + capitalize(plato) + "\n";
+function mostrarPrincipales(menuActual) {
+    var mensajePrincipales = "Estos son los principales de nuestra carta de mediodía:\n\n";
+    var i = 1;
+    for (var platoPrincipal in principales) {
+        mensajePrincipales += i + ". " + capitalize(platoPrincipal) + ": " + principales[platoPrincipal].precio[menuActual].toFixed(2) + "€\n";
+        i++;
     }
+    var eleccionPrincipal = parseInt(prompt(mensajePrincipales + "\n¿Qué deseas tomar? Escribe el número correspondiente al plato:"));
 
-    var eleccionPrincipal = prompt(mensajePrincipal + "\nPor favor, escribe el nombre del plato principal que quieres tomar:").toLowerCase();
+    if (eleccionPrincipal >= 1 && eleccionPrincipal <= i) {
+        eleccionPrincipal--; 
+        var precioEleccionPrincipal = principales[Object.keys(principales)[eleccionPrincipal]].precio[menuActual];
 
-    if (eleccionPrincipal in principales) {
-        if (menu === "comida") {
-            precioPrincipal = principales[eleccionPrincipal].precio.comida;
-        } else {
-            precioPrincipal = principales[eleccionPrincipal].precio.cena;
-        }
+        var precioConPersonalizacion = personalizarPrincipales(Object.keys(principales)[eleccionPrincipal]);
 
-        var precioPersonalizacion = personalizarPlatoPrincipal(eleccionPrincipal);
+        precioEleccionPrincipal += precioConPersonalizacion;
 
-        precioPrincipal += precioPersonalizacion;
-
-        var confirmacionPrincipal = "De acuerdo, de principal pondremos " + eleccionPrincipal + ". Su precio es: " + precioPrincipal.toFixed(2) + "€."; 
-
-        switch (menu.toLowerCase()) {
+        switch (menuActual) {
             case "comida":
                 switch (eleccionPrincipal) {
                     case "hamburguesa":
@@ -291,70 +285,86 @@ function mostrarDesayuno() {
                 }
                 break;
         }
+
+        if (precioConPersonalizacion > 0) {
+            var nombreEleccionPrincipal = Object.keys(principales)[eleccionPrincipal];
+            var nombrePersonalizacion = principales[nombreEleccionPrincipal].personalizaciones[Object.keys(principales[nombreEleccionPrincipal].personalizaciones)[0]].nombre;
+            alert("De acuerdo, de primer plato pondremos " + nombreEleccionPrincipal + " con " + nombrePersonalizacion + ".");
+        } else {
+            var nombreEleccionPrincipal = Object.keys(principales)[eleccionPrincipal];
+            alert("De acuerdo, de primer plato pondremos " + nombreEleccionPrincipal + ".");
+        }
+        return;
     } else {
-        alert("Selección inválida. Por favor, elige un plato principal válido.");
+        alert("Selección inválida. Por favor, elige un número válido.");
+        mostrarPrincipales(menuActual);
     }
-    alert(confirmacionPrincipal);
     
     return precioPrincipal;
 }
 
-function personalizarPlatoPrincipal(eleccionPrincipal) {
+function personalizarPrincipales(eleccionPrincipal) {
     switch (eleccionPrincipal) {
         case "hamburguesa":
-            var precioExtraHamburguesa = principales.hamburguesa.personalizaciones.huevo.precio;
-            var extraHamburguesa = principales.hamburguesa.personalizaciones.huevo.nombre;
-            var extraHamburguesa = prompt("¿Deseas añadir " + extraHamburguesa + " a tu " + eleccionPrincipal + " por " + precioExtraHamburguesa + "€ más? (Sí/No)").toLowerCase();
-            if (extraHamburguesa === "sí" || extraHamburguesa === "si") {
-                principales[eleccionPrincipal].precio += precioExtraHamburguesa; 
-                return precioExtraHamburguesa;
-            } else {
+            var precioHuevo = principales[eleccionPrincipal].personalizaciones.huevo.precio;
+            var huevoFrito = principales[eleccionPrincipal].personalizaciones.huevo.nombre;
+            var personalizacionHamburguesa = prompt("¿Deseas añadir " + huevoFrito + " a tu " + eleccionPrincipal + " por " + precioHuevo + "€ más? (Sí/No)").toLowerCase();
+            if (personalizacionHamburguesa === "sí" || personalizacionHamburguesa === "si") {
+                principales[eleccionPrincipal].precio.comida += precioHuevo;
+                return precioHuevo;
+            } else if (personalizacionHamburguesa === "no" ) {
                 return 0; 
-            }
+            } else {
+                alert("Lo sentimos, debes introducir 'sí' o 'no'.");
+                return "Lo sentimos, debes introducir 'sí' o 'no'. " + personalizarPrincipales(eleccionPrincipal);            }
             break;
         case "sandwich":
-            var precioExtraSandwich = principales.sandwich.personalizaciones.queso.precio;
-            var extraSandwich = principales.sandwich.personalizaciones.queso.nombre;
-            var extraSandwich = prompt("¿Deseas añadir " + extraSandwich + " a tu " + eleccionPrincipal + " por " + precioExtraSandwich + "€ más? (Sí/No)").toLowerCase();
-            if (extraSandwich === "sí" || extraSandwich === "si") {
-                principales[eleccionPrincipal].precio += precioExtraSandwich; 
-                return precioExtraSandwich;
-            } else {
+            var precioQueso = principales[eleccionPrincipal].personalizaciones.queso.precio;
+            var quesoCheddar = principales[eleccionPrincipal].personalizaciones.queso.nombre;
+            var personalizacionSandwich = prompt("¿Deseas añadir " + quesoCheddar + " a tu " + eleccionPrincipal + " por " + precioQueso + "€ más? (Sí/No)").toLowerCase();
+            if (personalizacionSandwich === "sí" || personalizacionSandwich === "si") {
+                principales[eleccionPrincipal].precio.comida += precioQueso;
+                return precioQueso;
+            } else if (personalizacionSandwich === "no" ) {
                 return 0; 
-            }
+            } else {
+                alert("Lo sentimos, debes introducir 'sí' o 'no'.");
+                return "Lo sentimos, debes introducir 'sí' o 'no'. " + personalizarPrincipales(eleccionPrincipal);            }
             break;
         case "pescado":
-            var precioExtraPescado = principales.pescado.personalizaciones.patatas.precio;
-            var extraPescado = principales.pescado.personalizaciones.patatas.nombre;
-            var extraPescado = prompt("¿Deseas añadir " + extraPescado + " a tu " + eleccionPrincipal + " por " + precioExtraPescado + "€ más? (Sí/No)").toLowerCase();
-            if (extraPescado === "sí" || extraPescado === "si") {
-                principales[eleccionPrincipal].precio += precioExtraPescado; 
-                return precioExtraPescado;
+            var precioPatatas = principales[eleccionPrincipal].personalizaciones.patatas.precio;
+            var patatasAsadas = principales[eleccionPrincipal].personalizaciones.patatas.nombre;
+            var personalizacionPescado = prompt("¿Deseas acompañar tu " + eleccionPrincipal + " con " + patatasAsadas + " por " + precioPatatas + "€ más? (Sí/No)").toLowerCase();
+            if (personalizacionPescado === "sí" || personalizacionPescado === "si") {
+                principales[eleccionPrincipal].precio.comida += precioPatatas;
+                return precioPatatas;
+            } else if (personalizacionPescado === "no" ) {
+                return 0; 
             } else {
-                return 0;
-            }
+                alert("Lo sentimos, debes introducir 'sí' o 'no'.");
+                return "Lo sentimos, debes introducir 'sí' o 'no'. " + personalizarPrincipales(eleccionPrincipal);            }
             break;
         case "pasta":
-            var precioExtraPasta = principales.pasta.personalizaciones.queso.precio;
-            var extraPasta = principales.pasta.personalizaciones.queso.nombre;
-            var extraPasta = prompt("¿Deseas añadir " + extraPasta + " a tu " + eleccionPrincipal + " por " + precioExtraPasta + "€ más? (Sí/No)").toLowerCase();
-            if (extraPasta === "sí" || extraPasta === "si") {
-                principales[eleccionPrincipal].precio += precioExtraPasta; 
-                return precioExtraPasta;
-            } else {
+            var precioQuesoPasta = principales[eleccionPrincipal].personalizaciones.queso.precio;
+            var quesoParmesano = principales[eleccionPrincipal].personalizaciones.queso.nombre;
+            var personalizacionPasta = prompt("¿Deseas añadir " + quesoParmesano + " a tu " + eleccionPrincipal + " por " + precioQuesoPasta + "€ más? (Sí/No)").toLowerCase();
+            if (personalizacionPasta === "sí" || personalizacionPasta === "si") {
+                principales[eleccionPrincipal].precio.comida += precioQuesoPasta;
+                return precioQuesoPasta;
+            } else if (personalizacionPasta === "no" ) {
                 return 0; 
-            }
+            } else {
+                alert("Lo sentimos, debes introducir 'sí' o 'no'.");
+                return "Lo sentimos, debes introducir 'sí' o 'no'. " + personalizarPrincipales(eleccionPrincipal);            }
             break;
         default:
-            alert("Plato principal inválido.");
+            alert("Plato principal no válido.");
             return 0;
-            break;
     }
-    return 0; 
 }
 
 
-function mostrarAcompanantes(menu) {
+/*function mostrarAcompanantes(menuActual) {
     var precioAcompanante1 = 0;
     var precioAcompanante2 = 0;
     
@@ -400,19 +410,16 @@ function calcularPrecioFinal(precioPrincipal, precioAcompanantes) {
     var mensajeDespedida = "Muchas gracias por su pedido.\nEl importe total a pagar es de " + precioFinal.toFixed(2) + "€.\n¡Hasta la próxima!"
 
     alert(mensajeDespedida);
-}
+}*/
 
 function mostrarComida() {
-    var precioPrincipalComida = mostrarPrincipales("comida");
-    var precioAcompanantesComida = mostrarAcompanantes("comida");
-    calcularPrecioFinal(precioPrincipalComida, precioAcompanantesComida); 
+    mostrarPrincipales("comida");
 }
 
 function mostrarCena() {
-    var precioPrincipalCena = mostrarPrincipales("cena");
-    var precioAcompanantesCena = mostrarAcompanantes("cena");
-    calcularPrecioFinal(precioPrincipalCena, precioAcompanantesCena);
-}*/
+    mostrarPrincipales("cena");
+}
+
         
     </script>
 </body>
