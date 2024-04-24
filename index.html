@@ -61,7 +61,7 @@
                 nombre: "Pescado",
                 precio: { comida: 9.5, cena: 11 },
                 personalizaciones: {
-                    "patatas": { nombre: "patatas asadas", precio: 2 }
+                    "verduras": { nombre: "verduras asadas", precio: 2 }
                     }
             },
             pasta: {
@@ -332,12 +332,12 @@ function personalizarPrincipales(eleccionPrincipal) {
                 return "Lo sentimos, debes introducir 'sí' o 'no'. " + personalizarPrincipales(eleccionPrincipal);            }
             break;
         case "pescado":
-            var precioPatatas = principales[eleccionPrincipal].personalizaciones.patatas.precio;
-            var patatasAsadas = principales[eleccionPrincipal].personalizaciones.patatas.nombre;
-            var personalizacionPescado = prompt("¿Deseas acompañar tu " + eleccionPrincipal + " con " + patatasAsadas + " por " + precioPatatas + "€ más? (Sí/No)").toLowerCase();
+            var precioVerduras = principales[eleccionPrincipal].personalizaciones.verduras.precio;
+            var verdurasAsadas = principales[eleccionPrincipal].personalizaciones.verduras.nombre;
+            var personalizacionPescado = prompt("¿Deseas acompañar tu " + eleccionPrincipal + " con " + verdurasAsadas + " por " + precioVerduras + "€ más? (Sí/No)").toLowerCase();
             if (personalizacionPescado === "sí" || personalizacionPescado === "si") {
-                principales[eleccionPrincipal].precio.comida += precioPatatas;
-                return precioPatatas;
+                principales[eleccionPrincipal].precio.comida += precioVerduras;
+                return precioVerduras;
             } else if (personalizacionPescado === "no" ) {
                 return 0; 
             } else {
@@ -364,47 +364,55 @@ function personalizarPrincipales(eleccionPrincipal) {
 }
 
 
-/*function mostrarAcompanantes(menuActual) {
-    var precioAcompanante1 = 0;
-    var precioAcompanante2 = 0;
-    
-    var mensajeAcompanantes = "Éstos son los acompañantes que tenemos en la carta:\n";
-        for (var acompanante in acompanantes) {
-        mensajeAcompanantes += "- " + capitalize(acompanante) + "\n";
+function mostrarAcompanantes(menuActual) {
+    var mensajeAcompanantes = "Estos son los acompañantes que tenemos en la carta:\n\n";
+    var i = 1;
+    for (var acompanante in acompanantes) {
+        mensajeAcompanantes += i + ". " + capitalize(acompanante) + ": " + acompanantes[acompanante].precio[menuActual].toFixed(2) + "€\n";
+        i++;
     }
 
-    var eleccionAcompanante1 = prompt(mensajeAcompanantes + "\nElige tu primer acompañante:").toLowerCase();
+    var seguirPidiendo = true;
+    while (seguirPidiendo) {
+        var eleccionAcompanante = prompt(mensajeAcompanantes + "\n¿Deseas tomar algún acompañante? Escribe el número correspondiente al plato o 'no' para terminar:");
 
-    if (eleccionAcompanante1 in acompanantes) {
-        if (menu === "comida") {
-            precioAcompanante1 = acompanantes[eleccionAcompanante1].precio.comida;
+        if (eleccionAcompanante.toLowerCase() === "no") {
+            alert("Entendido, no deseas tomar ningún acompañante.");
+            seguirPidiendo = false;
         } else {
-            precioAcompanante1 = acompanantes[eleccionAcompanante1].precio.cena;
-        }
+            eleccionAcompanante = parseInt(eleccionAcompanante);
+            if (!isNaN(eleccionAcompanante) && eleccionAcompanante >= 1 && eleccionAcompanante <= i) {
+                var nombreAcompanante = Object.keys(acompanantes)[eleccionAcompanante - 1];
+                alert("Has elegido " + nombreAcompanante + " como acompañante.");
 
-        var eleccionAcompanante2 = prompt(mensajeAcompanantes + "\nElige tu segundo acompañante:").toLowerCase();
+                var seguirPidiendoOpcion = true;
+                do {
+                    var opcion = prompt(mensajeAcompanantes + "\n¿Deseas tomar algo más de la carta? Escribe el número correspondiente al plato o 'no' para terminar:");
 
-        if (eleccionAcompanante2 in acompanantes) {
-            if (menu === "comida") {
-                precioAcompanante2 = acompanantes[eleccionAcompanante2].precio.comida;
+                    if (opcion.toLowerCase() === "no") {
+                        alert("Entendido, no deseas tomar nada más de la carta.");
+                        seguirPidiendoOpcion = false;
+                        seguirPidiendo = false;
+                    } else {
+                        opcion = parseInt(opcion);
+                        if (!isNaN(opcion) && opcion >= 1 && opcion <= i) {
+                            var nombreOpcion = Object.keys(acompanantes)[opcion - 1];
+                            alert("Has elegido " + nombreOpcion + " como opción adicional.");
+                        } else {
+                            alert("Selección inválida. Por favor, elige un número válido o escribe 'no' para terminar.");
+                        }
+                    }
+                } while (seguirPidiendoOpcion);
             } else {
-                precioAcompanante2 = acompanantes[eleccionAcompanante2].precio.cena;
+                alert("Selección inválida. Por favor, elige un número válido o escribe 'no' para terminar.");
+                mostrarAcompanantes(menuActual);
             }
-            
-            var precioAcompanantes = precioAcompanante1 + precioAcompanante2;
-
-            var mensajeAcompanantesElegidos = "Tus acompañantes elegidos son: " + eleccionAcompanante1 + " y " + eleccionAcompanante2 + ". El precio de ambos es " + precioAcompanantes.toFixed(2) +"€";
-            alert(mensajeAcompanantesElegidos);
-        } else {
-            alert("Selección inválida. Por favor, elige un acompañante válido.");
         }
-    } else {
-        alert("Selección inválida. Por favor, elige un acompañante válido.");
     }
-
-    return precioAcompanantes;
 }
 
+
+/*
 function calcularPrecioFinal(precioPrincipal, precioAcompanantes) {
     var precioFinal = precioPrincipal + precioAcompanantes
     var mensajeDespedida = "Muchas gracias por su pedido.\nEl importe total a pagar es de " + precioFinal.toFixed(2) + "€.\n¡Hasta la próxima!"
@@ -414,10 +422,12 @@ function calcularPrecioFinal(precioPrincipal, precioAcompanantes) {
 
 function mostrarComida() {
     mostrarPrincipales("comida");
+    mostrarAcompanantes("comida");
 }
 
 function mostrarCena() {
     mostrarPrincipales("cena");
+    mostrarAcompanantes("cena");
 }
 
         
