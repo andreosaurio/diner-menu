@@ -37,7 +37,7 @@
                 nombre: "Croissant",
                 precio: 2.5,
                 personalizaciones: {
-                    "mermelada": { nombre: "Mermelada de fresa", precio: 0.75 }
+                    "mermelada": { nombre: "Mermelada de melocotón", precio: 0.75 }
                 }
             }
         };
@@ -149,95 +149,132 @@ function personalizarDesayuno(eleccionDesayuno) {
         case "tostadas":
             var precioMermelada = desayuno[eleccionDesayuno].personalizaciones.mermelada.precio;
             var mermeladaFresa = desayuno[eleccionDesayuno].personalizaciones.mermelada.nombre;
-            var personalizacionTostadas = prompt("¿Deseas añadir " + mermeladaFresa + " a tus " + eleccionDesayuno + " por " + precioMermelada + "€ más? (Sí/No)").toLowerCase();
+            var personalizacionTostadas = prompt("¿Deseas añadir " + mermeladaFresa.toLowerCase() + " a tus " + eleccionDesayuno + " por " + precioMermelada + "€ más? (Sí/No)").toLowerCase();
             if (personalizacionTostadas === "sí" || personalizacionTostadas === "si") {
-                return precioMermelada;
-            } else if (personalizacionTostadas === "no" ) {
-                return 0; 
+                return { nombre: mermeladaFresa, precio: precioMermelada };
             } else {
-                alert("Lo sentimos, debes introducir 'sí' o 'no'.");
-                return "Lo sentimos, debes introducir 'sí' o 'no'. " + personalizarDesayuno(eleccionDesayuno);            }
+                return { nombre: "", precio: 0 };
+            }
             break;
         case "churros":
             var precioChocolate = desayuno[eleccionDesayuno].personalizaciones.chocolate.precio;
             var chocolateTaza = desayuno[eleccionDesayuno].personalizaciones.chocolate.nombre;
-            var personalizacionChurros = prompt("¿Deseas acompañar tus " + eleccionDesayuno + " con " + chocolateTaza + " por " + precioChocolate + "€ más? (Sí/No)").toLowerCase();
+            var personalizacionChurros = prompt("¿Deseas acompañar tus " + eleccionDesayuno + " con " + chocolateTaza.toLowerCase() + " por " + precioChocolate + "€ más? (Sí/No)").toLowerCase();
             if (personalizacionChurros === "sí" || personalizacionChurros === "si") {
-                return precioChocolate;
-            } else if (personalizacionChurros === "no" ) {
-                return 0; 
+                return { nombre: chocolateTaza, precio: precioChocolate };
             } else {
-                alert("Lo sentimos, debes introducir 'sí' o 'no'.");
-                return "Lo sentimos, debes introducir 'sí' o 'no'. " + personalizarDesayuno(eleccionDesayuno);            }
+                return { nombre: "", precio: 0 };
+            }
             break;
         case "tortilla":
             var precioPan = desayuno[eleccionDesayuno].personalizaciones.pan.precio;
             var panTomate = desayuno[eleccionDesayuno].personalizaciones.pan.nombre;
-            var personalizacionTortilla = prompt("¿Deseas añadir " + panTomate + " a tu " + eleccionDesayuno + " por " + precioPan + "€ más? (Sí/No)").toLowerCase();
+            var personalizacionTortilla = prompt("¿Deseas añadir " + panTomate.toLowerCase() + " a tu " + eleccionDesayuno + " por " + precioPan + "€ más? (Sí/No)").toLowerCase();
             if (personalizacionTortilla === "sí" || personalizacionTortilla === "si") {
-                return precioPan;
-            } else if (personalizacionTortilla === "no" ) {
-                return 0; 
+                return { nombre: panTomate, precio: precioPan };
             } else {
-                alert("Lo sentimos, debes introducir 'sí' o 'no'.");
-                return "Lo sentimos, debes introducir 'sí' o 'no'. " + personalizarDesayuno(eleccionDesayuno);            }
+                return { nombre: "", precio: 0 };
+            }
             break;
         case "croissant":
             var precioMermeladaCroissant = desayuno[eleccionDesayuno].personalizaciones.mermelada.precio;
-            var mermeladaFresaCroissant = desayuno[eleccionDesayuno].personalizaciones.mermelada.nombre;
-            var personalizacionCroissant = prompt("¿Deseas añadir " + mermeladaFresaCroissant + " a tu " + eleccionDesayuno + " por " + precioMermeladaCroissant + "€ más? (Sí/No)").toLowerCase();
+            var mermeladaCroissant = desayuno[eleccionDesayuno].personalizaciones.mermelada.nombre;
+            var personalizacionCroissant = prompt("¿Deseas añadir " + mermeladaCroissant.toLowerCase() + " a tu " + eleccionDesayuno + " por " + precioMermeladaCroissant + "€ más? (Sí/No)").toLowerCase();
             if (personalizacionCroissant === "sí" || personalizacionCroissant === "si") {
-                return precioMermeladaCroissant;
-            } else if (personalizacionCroissant === "no" ) {
-                return 0; 
+                return { nombre: mermeladaCroissant, precio: precioMermeladaCroissant };
             } else {
-                alert("Lo sentimos, debes introducir 'sí' o 'no'.");
-                return "Lo sentimos, debes introducir 'sí' o 'no'. " + personalizarDesayuno(eleccionDesayuno);            }
+                return { nombre: "", precio: 0 };
+            }
             break;
     }
 }
 
-
 function mostrarDesayuno() {
-    var mensajeDesayuno = "Esta es nuestra carta de desayunos:\n\n";
-    var i = 1;
-    for (var platoDesayuno in desayuno) {
-        mensajeDesayuno += i + ". " + capitalize(platoDesayuno) + ": " + desayuno[platoDesayuno].precio.toFixed(2) + "€\n";
-        i++;
-    }
-    var eleccionDesayuno = parseInt(prompt(mensajeDesayuno + "\n¿Qué deseas tomar? Escribe el número correspondiente al plato:"));
+    var mensajeInicial = true;
+    var desayunoElegido = [];
+    var seguirPidiendo = true;
 
-    if (eleccionDesayuno >= 1 && eleccionDesayuno <= i -1 ) {
-        eleccionDesayuno--; 
+    do {
+        var mensajeDesayuno = ""; 
 
-        var platoSeleccionado = Object.keys(desayuno)[eleccionDesayuno];
-        var precioBase = desayuno[platoSeleccionado].precio;
-        var precioPersonalizacion = personalizarDesayuno(platoSeleccionado);
+        if (mensajeInicial) {
+            mensajeDesayuno = "Esta es nuestra carta de desayunos:\n\n";
+            var i = 1;
+            for (var platoDesayuno in desayuno) {
+                mensajeDesayuno += i + ". " + capitalize(platoDesayuno) + ": " + desayuno[platoDesayuno].precio.toFixed(2) + "€\n";
+                i++;
+            }
+        } else {
+            mensajeDesayuno = "¿Deseas añadir algún plato más?\n\n";
+            var i = 1;
+            for (var platoDesayuno in desayuno) {
+                mensajeDesayuno += i + ". " + capitalize(platoDesayuno) + "\n";
+                i++;
+            }
+        }
 
-        imprimirTicketDesayuno(platoSeleccionado, precioBase, precioPersonalizacion);
+        var eleccionDesayuno = prompt(mensajeDesayuno + "\nSelecciona el número del plato que deseas o escribe 'no' para terminar:");
 
-        return;
-    } else {
-        alert("Selección inválida. Por favor, elige un número válido.");
-        mostrarDesayuno();
-    }
+        if (eleccionDesayuno.toLowerCase() === "no") {
+            alert("Entendido, no deseas tomar ningún otro plato.\n\nVamos a preparar tu ticket...");
+            seguirPidiendo = false;
+            imprimirTicketDesayuno(desayunoElegido);
+        } else {
+            eleccionDesayuno = parseInt(eleccionDesayuno);
+            if (!isNaN(eleccionDesayuno) && eleccionDesayuno >= 1 && eleccionDesayuno <= i - 1) {
+                var platoSeleccionado = Object.keys(desayuno)[eleccionDesayuno - 1];
+                var precioBase = desayuno[platoSeleccionado].precio;
+                var personalizacion = personalizarDesayuno(platoSeleccionado);
+                
+                if (personalizacion.precio > 0) {
+                    var nombrePersonalizacion = personalizacion.nombre;
+                    alert("Has elegido " + platoSeleccionado + " con " + nombrePersonalizacion.toLowerCase() + " como plato de desayuno.");
+                    // Retornar objeto con detalles del desayuno y la personalización
+                    desayunoElegido.push({
+                        nombre: platoSeleccionado,
+                        precioBase: precioBase,
+                        precioPersonalizacion: personalizacion.precio,
+                        nombrePersonalizacion: nombrePersonalizacion
+                    });
+                } else {
+                    alert("Has elegido " + platoSeleccionado + " como plato de desayuno.");
+                    // Retornar objeto solo con detalles del desayuno
+                    desayunoElegido.push({
+                        nombre: platoSeleccionado,
+                        precioBase: precioBase
+                    });
+                }
+                
+                mensajeInicial = false; 
+            } else {
+                alert("Selección inválida. Por favor, elige un número válido o escribe 'no' para terminar.");
+                mensajeInicial = false;
+            }
+        }
+    } while (seguirPidiendo);
+
+    return desayunoElegido;
 }
 
-function imprimirTicketDesayuno(plato, precioBase, precioPersonalizacion) {
-    var mensaje = "¡Muchas gracias por visitar Botega Diner!\nAquí tiene su ticket:\n\n";
-    mensaje += capitalize(plato) + " " + precioBase.toFixed(2) + "€\n";
-    
-    if (precioPersonalizacion > 0) {
-        var nombrePersonalizacion = desayuno[plato].personalizaciones[Object.keys(desayuno[plato].personalizaciones)[0]].nombre;
-        mensaje += "Extra:\n";
-        mensaje += "    - " + nombrePersonalizacion + ": " + precioPersonalizacion.toFixed(2) + "€\n";
-    }
+function imprimirTicketDesayuno(desayunoElegido) {
+    var mensaje = "¡Muchas gracias por visitar Botega Diner!\n\n";
 
-    mensaje += "\nImporte total a pagar: " + (precioBase + precioPersonalizacion).toFixed(2) + "€\n\n¡Disfrute de su pedido!";
+    desayunoElegido.forEach(function(platoElegido) {
+        mensaje += "- " + capitalize(platoElegido.nombre) + ": " + platoElegido.precioBase.toFixed(2) + "€\n";
+        if (platoElegido.precioPersonalizacion !== undefined && platoElegido.nombrePersonalizacion !== undefined) {
+            mensaje += "   Extra:\n";
+            mensaje += "         " + platoElegido.nombrePersonalizacion + ": " + platoElegido.precioPersonalizacion.toFixed(2) + "€\n";
+        }
+    });
+
+    var importeTotal = desayunoElegido.reduce(function(total, plato) {
+        return total + plato.precioBase + (plato.precioPersonalizacion || 0);
+    }, 0);
+
+    mensaje += "\nImporte total a pagar: " + importeTotal.toFixed(2) + "€\n\n¡Disfrute de su pedido!";
     
     alert(mensaje);
 }
-
 
 function mostrarPrincipales(menuActual) {
     var mensajePrincipales = "Estos son los principales de nuestra carta de " + menuActual + ":\n\n";
@@ -423,15 +460,15 @@ function mostrarAcompanantes(menuActual) {
 
 function imprimirTicket(eleccion, eleccionAcompanantes) {
     var mensaje = "¡Muchas gracias por visitar Botega Diner!\n\n";
-    mensaje += capitalize(eleccion.nombreEleccionPrincipal) + ": " + eleccion.precioEleccionPrincipal.toFixed(2) + "€\n";
+    mensaje += "- " + capitalize(eleccion.nombreEleccionPrincipal) + ": " + eleccion.precioEleccionPrincipal.toFixed(2) + "€\n";
 
     if (eleccion.nombrePersonalizacion && eleccion.precioPersonalizacion) {
-        mensaje += "Extra:          \n       " + capitalize(eleccion.nombrePersonalizacion) + ": " + eleccion.precioPersonalizacion.toFixed(2) + "€\n";
+        mensaje += "   Extra:\n" + "         " + capitalize(eleccion.nombrePersonalizacion) + ": " + eleccion.precioPersonalizacion.toFixed(2) + "€\n";
     }
 
     if (eleccionAcompanantes && eleccionAcompanantes.length > 0) {
         eleccionAcompanantes.forEach(function(acompanante) {
-            mensaje += capitalize(acompanante.nombre) + ": " + acompanante.precio.toFixed(2) + "€\n";
+            mensaje += "- " + capitalize(acompanante.nombre) + ": " + acompanante.precio.toFixed(2) + "€\n";
         });
     }
 
